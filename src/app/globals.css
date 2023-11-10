@@ -1,9 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Nosifer&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
 :root {
   background-color: #ff914d;
+}
+
+.heading {
+  font-family: 'Creepster';
 }
 
 /* :root {

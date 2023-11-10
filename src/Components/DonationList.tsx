@@ -56,7 +56,7 @@ export default function DonationList ({ethersProvider, contractAddress, contract
         {
           newDonation ? 
           <li>
-            <span>{newDonation.user}</span>
+            {/* <span>{newDonation.user}</span> */}
             <span>{newDonation.email}</span>
             <span>{newDonation.nick}</span>
             <span>{newDonation.amount}</span>
@@ -66,7 +66,7 @@ export default function DonationList ({ethersProvider, contractAddress, contract
           if(index < 13) return null;
           return (
             <li key={index}>
-              <span>{donation.user}</span>
+              {/* <span>{donation.user}</span> */}
               <span>{donation.email}</span>
               <span>{donation.nick}</span>
               <span>{donation.amount}</span>

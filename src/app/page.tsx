@@ -8,7 +8,6 @@ import { abi, testAbi } from './abi';
 import PropTypes, { InferProps } from 'prop-types';
 import { ethers } from "ethers";
 
-
 // const TestContract = ({ web3, testContract }: InferProps<typeof DonationForm.propTypes> & { web3: Web3<any> | null, testContract: any | null}) => {
 //   const [counter, setCounter] = useState(0)
 //   const [toggle, setToggle] = useState(false)
@@ -83,6 +82,8 @@ export default function Home() {
   const [contract, setContract] = useState<any | null>(null)
   const [testContract, setTestContract] = useState<ethers.Contract | null>(null)
   const [minAmount, setMinAmount] = useState<string | null>(null)
+  const [hasWindowEthereum, setHasWindowEthereum] = useState<boolean>(true)
+  const [shouldGetEth, setShouldGetEth] = useState<number>(0)
 
   useEffect(() => {
     async function initialize() {
@@ -96,23 +97,32 @@ export default function Home() {
         
         const contractInstance = new ethers.Contract(contractAddress, abi, signer)
         setContract(contractInstance)
+        setHasWindowEthereum(true)
       } else {
         console.log('No window.ethereum')
-        alert('Please install an Ethereum wallet.');
+        setHasWindowEthereum(false)
+        if(shouldGetEth > 0) {
+          alert('Please install an Ethereum wallet.');
+        }
       }
     }
     initialize()
-  }, [])
+  }, [shouldGetEth])
 
   return (
-    <div className="flex h-screen items-center justify-center flex-col">
-      <h1>Halloween</h1>
-      <DonationForm ethersProvider={ethersProvider} contract={contract} minAmount={minAmount}/>
+    <div className="min-h-screen flex flex-col items-center justify-center md:justify-between p-4">
+    {/* <div className="flex h-screen items-center justify-center flex-col"> */}
+    <div className="flex flex-col items-center justify-center h-max w-full md:w-auto space-y-4 p-8">
+      <h1 className="heading text-8xl">Halloween</h1>
+      <DonationForm ethersProvider={ethersProvider} contract={contract} minAmount={minAmount} hasWindowEthereum={hasWindowEthereum} setShouldGetEth={setShouldGetEth}/>
       {
         contract ?
-        <DonationList ethersProvider={ethersProvider} contractAddress={contractAddress} contract={contract}/> : null
+        <div className="mt-10 md:mt-10 md:absolute md:top-10 md:right-10 p-10">
+          <DonationList ethersProvider={ethersProvider} contractAddress={contractAddress} contract={contract}/>
+        </div> : null
       }
       {/* <TestContract web3={web3} testContract={testContract}/> */}
+    </div>
     </div>
   )
   }

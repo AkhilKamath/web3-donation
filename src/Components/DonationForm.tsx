@@ -4,7 +4,13 @@ import React, { useState, FormEvent } from 'react'
 import { ethers, formatEther} from 'ethers'
 import PropTypes, { InferProps } from 'prop-types';
  
-export default function DonationForm({ ethersProvider, contract, minAmount }: InferProps<typeof DonationForm.propTypes> & { ethersProvider: ethers.Provider | null, contract: any | null, minAmount: string | null}) {
+export default function DonationForm({ ethersProvider, contract, minAmount, hasWindowEthereum, setShouldGetEth }: 
+  InferProps<typeof DonationForm.propTypes> & { ethersProvider: ethers.Provider | null, 
+  contract: any | null, 
+  minAmount: string | null,
+  hasWindowEthereum: boolean,
+  setShouldGetEth: Function
+}) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
  
@@ -32,6 +38,13 @@ export default function DonationForm({ ethersProvider, contract, minAmount }: In
       setIsLoading(false)
     }
   }
+
+  function handleOnClick(event: any) {
+    if(!hasWindowEthereum) {
+      setShouldGetEth((old: number) => (old + 1) % 10)
+      event.preventDefault()
+    }
+  }
  
   return (
     <div>
@@ -44,13 +57,14 @@ export default function DonationForm({ ethersProvider, contract, minAmount }: In
             <span className="block sm:inline">Something went wrong. Could not send ETH</span>
           </div>      
         }
-        <p>Minimum amount is {minAmount} ETH</p>
+        {/* <p>Minimum amount is {minAmount} ETH</p> */}
         <input type="number" step='any' name='amount' placeholder="Amount" /><br/><br/>
         <input type="email" name='email' placeholder="Email" /><br/><br/>
         <input type="text" name='nick' placeholder="Nick" /><br/><br/>
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-            type="submit" disabled={isLoading}>
-            {isLoading ? 'Sending ETH...' : 'Submit'}
+            onClick={handleOnClick}
+            type={hasWindowEthereum ? "submit" : "button"} disabled={isLoading}>
+            {isLoading ? 'Sending ETH...' : hasWindowEthereum ? 'Submit' : 'Connect Wallet'}
         </button>
       </form>
     </div>
@@ -60,5 +74,7 @@ export default function DonationForm({ ethersProvider, contract, minAmount }: In
 DonationForm.propTypes = {
   ethersProvider: PropTypes.object,
   contract: PropTypes.any,
-  minAmount: PropTypes.string
+  minAmount: PropTypes.string,
+  hasWindowEthereum: PropTypes.bool, 
+  setShouldGetEth: PropTypes.func,
 };
